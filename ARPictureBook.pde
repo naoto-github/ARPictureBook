@@ -1,27 +1,18 @@
-/**
- NyARToolkit for proce55ing/1.0.0
- (c)2008-2011 nyatla
- airmail(at)ebony.plala.or.jp
- 
- 最も短いARToolKitのコードです。
- Hiroマーカを用意してください。
- 
- This sample program is most small sample as simpleLite.
- The marker is "patt.hiro".
- */
-
 //ライブラリのインポート
 import processing.video.*;
 import jp.nyatla.nyar4psg.*;
+
+//画像のパス
+String IMG_PATH = "img/christmas/";
 
 //カメラ
 Capture cam;
 
 //マーカーの配列
-MultiMarker markers[] = new MultiMarker[13];
+MultiMarker markers[] = new MultiMarker[16];
 
 //画像の配列
-PImage imgs[] = new PImage[13];
+PImage imgs[] = new PImage[16];
 
 //画像番号
 int index = 0;
@@ -34,7 +25,7 @@ int width = 640;
 int height = 480;
 
 void setup() {
-
+ 
   //キャプチャサイズ
   size(width, height, P3D);
 
@@ -59,6 +50,9 @@ void setup() {
     markers[i].addNyIdMarker(i+1, 80);
   }
 
+  //画像の初期化
+  loadImages();
+
   //カメラのスタート
   cam.start();
   
@@ -71,9 +65,6 @@ void draw()
   if (cam.available() !=true) {
     return;
   }
-
-  //画像の読込
-  loadImages();
 
   //カメラの読込
   cam.read();
@@ -93,74 +84,12 @@ void draw()
   for(int i=0; i<markers.length; i++){
     if(markers[i].isExistMarker(0)){
      
-      println("detect:" + i);
+      println("Detect:" + i);
       
       
       //画像サイズ
-      float img_width;
-      float img_height;
-      
-      switch(i){
-        case 0:
-          img_width = 500;
-          img_height = 500;
-          break;
-         case 1:
-          img_width = 500;
-          img_height = 500;
-          break;
-        case 2:
-          img_width = 500;
-          img_height = 500;
-          break;
-        case 3:
-          img_width = 500;
-          img_height = 500;
-          break;
-        case 4:
-          img_width = 500;
-          img_height = 500;
-          break;
-        case 5:
-          img_width = 500;
-          img_height = 500;
-          break;
-        case 6:
-          img_width = 500;
-          img_height = 500;
-          break;
-        case 7:
-          img_width = 500;
-          img_height = 500;
-          break;
-        case 8:
-          img_width = 500;
-          img_height = 500;
-          break;
-        case 9:
-          img_width = 500;
-          img_height = 500;
-          break;
-        case 10:
-          img_width = 500;
-          img_height = 500;
-          break;
-        case 11:
-          img_width = 500;
-          img_height = 500;
-          break;
-        case 12:
-          img_width = 500;
-          img_height = 500;
-          break;
-        case 13:
-          img_width = 500;
-          img_height = 500;
-          break;
-        default:
-          img_width = 0;
-          img_height = 0;
-      }
+      float img_width = 300;
+      float img_height = 300;
       
       //テクスチャの描画
       markers[i].beginTransform(0);
@@ -169,10 +98,10 @@ void draw()
       beginShape();
       texture(imgs[i]);
       noStroke();
-      vertex(-80, -80,  40, img_width, img_height);
-      vertex( 80, -80,  40, 0,         img_height);
-      vertex( 80,  80,  40, 0,         0);
-      vertex(-80,  80,  40, img_width, 0);
+      vertex(-60, -60,  30, img_width, img_height);
+      vertex( 60, -60,  30, 0,         img_height);
+      vertex( 60,  60,  30, 0,         0);
+      vertex(-60,  60,  30, img_width, 0);
       endShape();
       markers[i].endTransform();
     }
@@ -190,7 +119,20 @@ void mousePressed() {
 //画像の読込
 void loadImages() {
   for(int i=0; i<imgs.length; i++){
-    imgs[i] = loadImage("img/" + (i+1) + ".png");
+    
+    int number = i + 1;
+    String filename = number + ".png";
+   
+    if(number < 10){
+      filename = "00" + filename;
+    }
+    else if(number < 100){
+      filename = "0" + filename;
+    }
+    
+    imgs[i] = loadImage(IMG_PATH + filename);
+    
+    println("Load:" + filename);
   }
 }
 
