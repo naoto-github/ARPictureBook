@@ -95,7 +95,7 @@ void draw()
   for(int i=0; i<markers.length; i++){
     if(markers[i].isExistMarker(0)){
      
-      println("Detect:" + i);
+      //println("Detect:" + i);
       
       
       //画像サイズ
@@ -186,7 +186,7 @@ class Snow{
   float y;
   float speed; 
   PImage img;
-  int time;
+  float time;
   boolean visible;
   
   Snow(float x, float y, float speed, PImage img){
@@ -201,9 +201,10 @@ class Snow{
   void draw(){
  
     y = y + speed;
-    time = time + 1;
+    time = ((time + 1) % 72);
  
-    float d = sin(3.14 * (time * 1/36)) * 100;
+    float d = sin(6.28 * (time * 1/72)) * 2;
+    
     x = x + d;
     //println(d);
  
