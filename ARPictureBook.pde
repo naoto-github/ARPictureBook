@@ -17,12 +17,23 @@ PImage imgs[] = new PImage[16];
 //画像番号
 int index = 0;
 
+/****PC用の設定*****/
 //カメラナンバー
 int number = 0;
 
 //キャプチャサイズ
 int width = 640;
 int height = 480;
+/********************/
+
+/****Surface用の設定*****/
+//カメラナンバー
+//int number = 77;
+
+//キャプチャサイズ
+//int width = 1280;
+//int height = 720;
+/********************/
 
 void setup() {
  
@@ -52,7 +63,7 @@ void setup() {
 
   //画像の初期化
   loadImages();
-
+  
   //カメラのスタート
   cam.start();
   
@@ -80,7 +91,7 @@ void draw()
     markers[i].detect(cam);
   }
 
-  //**********マーカー１***********
+  //マーカーの処理
   for(int i=0; i<markers.length; i++){
     if(markers[i].isExistMarker(0)){
      
@@ -92,20 +103,38 @@ void draw()
       float img_height = 300;
       
       //テクスチャの描画
+      int r = 50;
       markers[i].beginTransform(0);
       textureMode(IMAGE);
       textureWrap(REPEAT);
       beginShape();
       texture(imgs[i]);
       noStroke();
-      vertex(-60, -60,  30, img_width, img_height);
-      vertex( 60, -60,  30, 0,         img_height);
-      vertex( 60,  60,  30, 0,         0);
-      vertex(-60,  60,  30, img_width, 0);
+      vertex(-2 * r, -2 * r, r, img_width, img_height);
+      vertex( 2 * r, -2 * r, r, 0,         img_height);
+      vertex( 2 * r,  2 * r, r, 0,         0);
+      vertex(-2 * r,  2 * r, r, img_width, 0);
       endShape();
       markers[i].endTransform();
     }
   }
+  
+  //雪の生成
+  if(random(1) < rate){
+    Snow snow = makeSnow();
+    snows.add(snow);
+  }
+  
+  //雪の処理
+  for(int i=0; i<snows.size(); i++){
+    Snow snow = snows.get(i);
+    snow.draw();
+    
+    if(snow.visible == false){
+      snows.remove(snow);
+    }
+  }
+  
 }
 
 //キャプチャ画像を保存
@@ -134,5 +163,58 @@ void loadImages() {
     
     println("Load:" + filename);
   }
+}
+
+//雪のリスト
+ArrayList<Snow> snows = new ArrayList<Snow>();
+
+//雪の降る確率
+float rate = 0.05;
+
+//雪の初期化
+Snow makeSnow(){
+  PImage img = loadImage("img/snow.png");
+  float x = random(width);
+  float y = 0;
+  float speed = 1;
+  Snow snow = new Snow(x, y, speed, img);
+  return snow;
+}
+
+class Snow{
+  float x;
+  float y;
+  float speed; 
+  PImage img;
+  int time;
+  boolean visible;
+  
+  Snow(float x, float y, float speed, PImage img){
+    this.x = x;
+    this.y = y;
+    this.speed = speed;
+    this.img = img;
+    this.time = 0;
+    this.visible = true;
+  }
+  
+  void draw(){
+ 
+    y = y + speed;
+    time = time + 1;
+ 
+    float d = sin(3.14 * (time * 1/36)) * 100;
+    x = x + d;
+    //println(d);
+ 
+    if(y >= height){
+      visible = false;
+    }
+    
+    if(visible){
+      image(img, x, y);
+    }
+  }
+  
 }
 
