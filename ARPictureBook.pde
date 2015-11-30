@@ -66,7 +66,6 @@ void setup() {
   
   //カメラのスタート
   cam.start();
-  
 
 }
 
@@ -80,7 +79,7 @@ void draw()
   //カメラの読込
   cam.read();
 
-  //frustumを考慮した背景描画
+  //背景描画
   background(0);
   for(int i=0; i<markers.length; i++){
     markers[i].drawBackground(cam);
@@ -135,14 +134,30 @@ void draw()
     }
   }
   
+  if(shoot){
+    PImage file = loadImage(filename);
+    image(file,0,0);
+  }
 }
+
+//保存ファイル名
+String filename;
+
+//撮影状態
+boolean shoot = false;
 
 //キャプチャ画像を保存
 void mousePressed() {
-  String filename = "result/" + index + ".jpg";
-  save(filename); 
-  println("Save at " + filename);
-  index++;
+  if(shoot == false){
+    filename = "result/" + index + ".jpg";
+    save(filename); 
+    println("Save at " + filename);
+    shoot = true;
+    index++;
+  }
+  else{
+    shoot = false;
+  }
 }
 
 //画像の読込
