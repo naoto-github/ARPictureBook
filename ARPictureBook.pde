@@ -8,11 +8,17 @@ String IMG_PATH = "img/christmas/";
 //カメラ
 Capture cam;
 
+//マーカーのサイズ
+int marker_size = 19;
+
 //マーカーの配列
-MultiMarker markers[] = new MultiMarker[16];
+MultiMarker markers[] = new MultiMarker[marker_size];
+
+//画像のサイズ
+int image_size = 16;
 
 //画像の配列
-PImage imgs[] = new PImage[16];
+PImage imgs[] = new PImage[image_size];
 
 //画像番号
 int index = 0;
@@ -92,52 +98,59 @@ void draw()
 
   //マーカーの処理
   for(int i=0; i<markers.length; i++){
+ 
     if(markers[i].isExistMarker(0)){
-     
-      //println("Detect:" + i);
+ 
+      if(i < image_size){  
       
-      
-      //画像サイズ
-      float img_width = 300;
-      float img_height = 300;
-      
-      //テクスチャの描画
-      int r = 50;
-      markers[i].beginTransform(0);
-      textureMode(IMAGE);
-      textureWrap(REPEAT);
-      beginShape();
-      texture(imgs[i]);
-      noStroke();
-      vertex(-2 * r, -2 * r, r, img_width, img_height);
-      vertex( 2 * r, -2 * r, r, 0,         img_height);
-      vertex( 2 * r,  2 * r, r, 0,         0);
-      vertex(-2 * r,  2 * r, r, img_width, 0);
-      endShape();
-      markers[i].endTransform();
+        //println("Detect:" + i);
+       
+        //画像サイズ
+        float img_width = 300;
+        float img_height = 300;
+        
+        //テクスチャの描画
+        int r = 50;
+        markers[i].beginTransform(0);
+        textureMode(IMAGE);
+        textureWrap(REPEAT);
+        beginShape();
+        texture(imgs[i]);
+        noStroke();
+        vertex(-2 * r, -2 * r, r, img_width, img_height);
+        vertex( 2 * r, -2 * r, r, 0,         img_height);
+        vertex( 2 * r,  2 * r, r, 0,         0);
+        vertex(-2 * r,  2 * r, r, img_width, 0);
+        endShape();
+        markers[i].endTransform();
+      }
+      else if(i == (image_size)){
+        sunning();
+      }
+      else if(i == (image_size + 1)){
+        raining();
+      }
+      else if(i == (image_size + 2)){
+        snowing();
+      }
     }
   }
   
-  //雪の生成
-  if(random(1) < rate){
-    Snow snow = makeSnow();
-    snows.add(snow);
-  }
+  //雪の効果
+  //snowing();
   
-  //雪の処理
-  for(int i=0; i<snows.size(); i++){
-    Snow snow = snows.get(i);
-    snow.draw();
-    
-    if(snow.visible == false){
-      snows.remove(snow);
-    }
-  }
+  //雨の効果
+  //raining();
   
+  //太陽の効果
+  //sunning();
+  
+  //画像のキャプチャ
   if(shoot){
     PImage file = loadImage(filename);
     image(file,0,0);
   }
+  
 }
 
 //保存ファイル名
@@ -180,11 +193,14 @@ void loadImages() {
   }
 }
 
+//***********************************
+// 雪の効果
+//***********************************
 //雪のリスト
 ArrayList<Snow> snows = new ArrayList<Snow>();
 
 //雪の降る確率
-float rate = 0.05;
+float rate_snows = 0.05;
 
 //雪の初期化
 Snow makeSnow(){
@@ -196,6 +212,27 @@ Snow makeSnow(){
   return snow;
 }
 
+//雪の生成
+void snowing(){
+  //雪の生成
+  if(random(1) < rate_snows){
+    Snow snow = makeSnow();
+    snows.add(snow);
+  }
+  
+  //雪の処理
+  for(int i=0; i<snows.size(); i++){
+    Snow snow = snows.get(i);
+    snow.draw();
+    
+    if(snow.visible == false){
+      snows.remove(snow);
+    }
+  }
+  
+}
+
+//雪のクラス
 class Snow{
   float x;
   float y;
@@ -233,4 +270,130 @@ class Snow{
   }
   
 }
+//***********************************
 
+//***********************************
+// 雨の効果
+//***********************************
+//雨のリスト
+ArrayList<Raindrop> raindrops = new ArrayList<Raindrop>();
+
+//雨の降る確率
+float rate_raindrops = 0.3;
+
+//雨の初期化
+Raindrop makeRaindrop(){
+  PImage img = loadImage("img/raindrop.png");
+  float x = random(width);
+  float y = 0;
+  float speed = 1;
+  Raindrop raindrop = new Raindrop(x, y, speed, img);
+  return raindrop;
+}
+
+//雨の生成
+void raining(){
+  //雨の生成
+  if(random(1) < rate_raindrops){
+    Raindrop raindrop = makeRaindrop();
+    raindrops.add(raindrop);
+  }
+  
+  //雨の処理
+  for(int i=0; i<raindrops.size(); i++){
+    Raindrop raindrop = raindrops.get(i);
+    raindrop.draw();
+    
+    if(raindrop.visible == false){
+      raindrops.remove(raindrop);
+    }
+  }
+  
+}
+
+//雨のクラス
+class Raindrop{
+  float x;
+  float y;
+  float speed; 
+  PImage img;
+  boolean visible;
+  
+  Raindrop(float x, float y, float speed, PImage img){
+    this.x = x;
+    this.y = y;
+    this.speed = speed;
+    this.img = img;
+    this.visible = true;
+  }
+  
+  void draw(){
+ 
+    y = y + speed;
+    speed = speed * 1.2;
+ 
+    if(y >= height){
+      visible = false;
+    }
+    
+    if(visible){
+      image(img, x, y);
+    }
+  }
+  
+}
+//***********************************
+
+//***********************************
+// 太陽の効果
+//***********************************
+
+//太陽
+Sun sun;
+
+//太陽の初期化
+Sun makeSun(){
+  PImage img = loadImage("img/sun.png");
+  float x = (img.width / 2) - 10;
+  float y = (img.height / 2) - 10;
+  Sun sun = new Sun(x, y, img);
+  return sun;
+}
+
+//太陽の生成
+void sunning(){
+  if(sun == null){
+    sun = makeSun();
+  }
+  sun.draw();
+}
+
+//太陽のクラス
+class Sun{
+  float x;
+  float y;
+  PImage img;
+  int time = 0;
+  boolean flg = true;
+  
+  Sun(float x, float y, PImage img){
+    this.x = x;
+    this.y = y;
+    this.img = img;
+  }
+  
+  void draw(){
+    time = time + 1;
+    
+    if(time % 10 == 0){
+      flg = !flg;
+    }
+    
+    if(flg){
+      image(img, x, y);
+    } 
+     
+  }
+  
+}
+//***********************************
