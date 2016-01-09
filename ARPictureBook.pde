@@ -1,4 +1,10 @@
 //ライブラリのインポート
+import ddf.minim.spi.*;
+import ddf.minim.signals.*;
+import ddf.minim.*;
+import ddf.minim.analysis.*;
+import ddf.minim.ugens.*;
+import ddf.minim.effects.*;
 import processing.video.*;
 import jp.nyatla.nyar4psg.*;
 
@@ -9,7 +15,7 @@ String IMG_PATH = "img/christmas/";
 Capture cam;
 
 //マーカーのサイズ
-int marker_size = 19;
+int marker_size = 24;
 
 //マーカーの配列
 MultiMarker markers[] = new MultiMarker[marker_size];
@@ -41,6 +47,10 @@ int height = 480;
 //int height = 720;
 /********************/
 
+//BGM
+Minim minim = new Minim(this);
+AudioPlayer players[] = new AudioPlayer[5];
+
 void setup() {
  
   //キャプチャサイズ
@@ -70,6 +80,9 @@ void setup() {
   //画像の初期化
   loadImages();
   
+  //プレイヤーの初期化
+  initPlayer();
+  
   //カメラのスタート
   cam.start();
 
@@ -98,7 +111,7 @@ void draw()
 
   //マーカーの処理
   for(int i=0; i<markers.length; i++){
- 
+    
     if(markers[i].isExistMarker(0)){
  
       if(i < image_size){  
@@ -133,7 +146,41 @@ void draw()
       else if(i == (image_size + 2)){
         snowing();
       }
+      else if(i == (image_size + 3)){
+        play(0);
+      }
+      else if(i == (image_size + 4)){
+        play(1);
+      }
+      else if(i == (image_size + 5)){
+        play(2);
+      }
+      else if(i == (image_size + 6)){
+        play(3);
+      }
+      else if(i == (image_size + 7)){
+        play(4);
+      }
+      
     }
+    else{
+      if(i == (image_size + 3)){
+        stop(0);
+      }
+      else if(i == (image_size + 4)){
+        stop(1);
+      }
+      else if(i == (image_size + 5)){
+        stop(2);
+      }
+      else if(i == (image_size + 6)){
+        stop(3);
+      }
+      else if(i == (image_size + 7)){
+        stop(4);
+      }
+    }
+
   }
   
   //雪の効果
@@ -144,6 +191,9 @@ void draw()
   
   //太陽の効果
   //sunning();
+  
+  //BGM
+  //play(0);
   
   //画像のキャプチャ
   if(shoot){
@@ -393,6 +443,38 @@ class Sun{
       image(img, x, y);
     } 
      
+  }
+  
+}
+//***********************************
+
+//***********************************
+
+void initPlayer(){
+  players[0] = minim.loadFile("sound/fly.mp3");
+  players[1] = minim.loadFile("sound/battle.mp3");
+  players[2] = minim.loadFile("sound/walk.mp3");
+  players[3] = minim.loadFile("sound/happy.mp3");
+  players[4] = minim.loadFile("sound/rock.mp3");
+  
+  for(int i=0; i<players.length; i++){
+    players[i].loop();
+  }
+}
+
+void play(int number){
+  if(players[number].isPlaying() == false){
+    players[number].play();
+  }
+}
+
+void stop(int number){
+  
+  if(players[number].isPlaying()){
+    println("Stop BGM");
+    players[number].pause();
+    //minim.stop();
+    //super.stop();
   }
   
 }
