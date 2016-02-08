@@ -9,7 +9,13 @@ import processing.video.*;
 import jp.nyatla.nyar4psg.*;
 
 //画像のパス
-String IMG_PATH = "img/christmas/";
+//String IMG_PATH = "img/christmas/";
+String IMG_PATH = "img/animals/";
+
+//天候画像
+String SUN_PATH = "img/weather/sun.png";
+String RAINDROP_PATH = "img/weather/raindrop.png";
+String SNOW_PATH = "img/weather/snow.png";
 
 //カメラ
 Capture cam;
@@ -254,7 +260,7 @@ float rate_snows = 0.05;
 
 //雪の初期化
 Snow makeSnow(){
-  PImage img = loadImage("img/snow.png");
+  PImage img = loadImage(SNOW_PATH);
   float x = random(width);
   float y = 0;
   float speed = 1;
@@ -333,7 +339,7 @@ float rate_raindrops = 0.3;
 
 //雨の初期化
 Raindrop makeRaindrop(){
-  PImage img = loadImage("img/raindrop.png");
+  PImage img = loadImage(RAINDROP_PATH);
   float x = random(width);
   float y = 0;
   float speed = 1;
@@ -403,7 +409,7 @@ Sun sun;
 
 //太陽の初期化
 Sun makeSun(){
-  PImage img = loadImage("img/sun.png");
+  PImage img = loadImage(SUN_PATH);
   float x = (img.width / 2) - 10;
   float y = (img.height / 2) - 10;
   Sun sun = new Sun(x, y, img);
@@ -451,11 +457,11 @@ class Sun{
 //***********************************
 
 void initPlayer(){
-  players[0] = minim.loadFile("sound/fly.mp3");
-  players[1] = minim.loadFile("sound/battle.mp3");
-  players[2] = minim.loadFile("sound/walk.mp3");
-  players[3] = minim.loadFile("sound/happy.mp3");
-  players[4] = minim.loadFile("sound/rock.mp3");
+  players[0] = minim.loadFile("sound/genki.mp3");
+  players[1] = minim.loadFile("sound/kirakira.mp3");
+  players[2] = minim.loadFile("sound/nonbiri.mp3");
+  players[3] = minim.loadFile("sound/omosiroi.mp3");
+  players[4] = minim.loadFile("sound/wakuwaku.mp3");
   
   for(int i=0; i<players.length; i++){
     players[i].loop();
